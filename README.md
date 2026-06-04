@@ -11,7 +11,7 @@ git clone https://github.com/Shu0209/PDF-ChatBot
 ### STEP 01- Create a conda environment after opening the repository
 
 ```bash
-conda create -p venv python=3.10 -y
+conda create -p venv python=3.11 -y
 ```
 
 ```bash
