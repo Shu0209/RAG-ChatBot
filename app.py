@@ -1,6 +1,6 @@
 
 from flask import Flask, render_template, request, jsonify, session
-from src.helper import load_pdf_from_bytes, text_split, download_hugging_face_embeddings
+from src.helper import load_document_from_bytes, text_split, download_hugging_face_embeddings,SUPPORTED_EXTENSIONS
 from langchain_pinecone import PineconeVectorStore
 from langchain_openai import ChatOpenAI
 from langchain.chains import create_retrieval_chain
@@ -55,12 +55,14 @@ def upload_pdf():
         return jsonify({"error": "No file part"}), 400
 
     file = request.files["file"]
-    if file.filename == "" or not file.filename.lower().endswith(".pdf"):
-        return jsonify({"error": "Please upload a valid PDF file"}), 400
+    ext = os.path.splitext(file.filename)[1].lower()
+
+    if file.filename == "" or ext not in SUPPORTED_EXTENSIONS:
+        return jsonify({"error": f"Unsupported file. Allowed: {', '.join(SUPPORTED_EXTENSIONS)}"}), 400
 
     try:
         file_bytes = file.read()
-        documents = load_pdf_from_bytes(file_bytes)
+        documents = load_document_from_bytes(file_bytes,file.filename)
         chunks = text_split(documents)
 
         if len(chunks) == 0:

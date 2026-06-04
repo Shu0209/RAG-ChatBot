@@ -1,6 +1,5 @@
-Data
 research
-.venv
-src/__pycache__
+venv
 .env
 require.txt
+__pycache__/
