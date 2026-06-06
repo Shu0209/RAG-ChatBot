@@ -59,3 +59,6 @@ open up localhost:
 
 
 
+Saved URI - 965932217315.dkr.ecr.eu-north-1.amazonaws.com/rag-chatbot
+
+
