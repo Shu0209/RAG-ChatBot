@@ -1,4 +1,3 @@
-/* ── RESET & BASE ── */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -29,14 +28,14 @@ body {
     background: var(--bg);
     font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
     color: var(--text);
-    height: 100vh;
-    min-height: 100dvh;
+    /* FIX: use 100dvh so mobile browser chrome (address bar) is accounted for */
+    height: 100dvh;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    /* FIX: removed overflow:hidden — it was clipping the bottom area on mobile */
 }
 
-/* Subtle background grid */
+/* Subtle grid background */
 body::before {
     content: '';
     position: fixed;
@@ -49,15 +48,16 @@ body::before {
     z-index: 0;
 }
 
-/* ── LAYOUT ── */
+/* ── Layout ── */
 .layout {
     display: flex;
-    height: 100vh;
+    /* FIX: 100dvh instead of 100vh */
+    height: 100dvh;
     position: relative;
     z-index: 1;
 }
 
-/* ── SIDEBAR ── */
+/* ── Sidebar ── */
 .sidebar {
     width: 260px;
     background: var(--surface);
@@ -95,9 +95,7 @@ body::before {
     letter-spacing: -0.3px;
 }
 
-.logo-text span {
-    color: var(--accent);
-}
+.logo-text span { color: var(--accent); }
 
 .sidebar-label {
     font-size: 10px;
@@ -122,7 +120,7 @@ body::before {
     margin-bottom: 6px;
 }
 
-.doc-card:hover { border-color: var(--border-hover); background: #202028; }
+.doc-card:hover  { border-color: var(--border-hover); background: #202028; }
 .doc-card.active { border-color: var(--accent); background: rgba(124,107,255,0.08); }
 
 .doc-icon {
@@ -142,9 +140,9 @@ body::before {
 .doc-icon.txt  { background: rgba(251,191,36,0.15);  color: #fbbf24; }
 .doc-icon.xlsx { background: rgba(16,185,129,0.15);  color: #34d399; }
 
-.doc-info { flex: 1; min-width: 0; }
-.doc-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.doc-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.doc-info  { flex: 1; min-width: 0; }
+.doc-name  { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.doc-meta  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
 .empty-docs {
     text-align: center;
@@ -179,18 +177,20 @@ body::before {
     gap: 7px;
 }
 
-.new-chat-btn:hover { background: rgba(124,107,255,0.18); border-color: var(--accent); }
+.new-chat-btn:hover       { background: rgba(124,107,255,0.18); border-color: var(--accent); }
 .new-chat-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* ── MAIN AREA ── */
+/* ── Main column ── */
 .main {
     flex: 1;
     display: flex;
     flex-direction: column;
     min-width: 0;
+    /* FIX: allow main to scroll internally rather than being clipped */
+    overflow: hidden;
 }
 
-/* ── TOPBAR ── */
+/* ── Topbar ── */
 .topbar {
     height: 60px;
     border-bottom: 1px solid var(--border);
@@ -230,7 +230,7 @@ body::before {
 
 @keyframes pulse {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+    50%       { opacity: 0.4; }
 }
 
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
@@ -250,22 +250,24 @@ body::before {
     transition: all 0.2s;
 }
 
-.icon-btn:hover { border-color: var(--border-hover); color: var(--text); background: var(--surface2); }
+.icon-btn:hover       { border-color: var(--border-hover); color: var(--text); background: var(--surface2); }
 .icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* ── MESSAGES ── */
+/* ── Message area ── */
 #messageArea {
     flex: 1;
     overflow-y: auto;
     padding: 28px 24px;
     scroll-behavior: smooth;
+    /* FIX: ensure it fills remaining space and is scrollable */
+    min-height: 0;
 }
 
-#messageArea::-webkit-scrollbar { width: 4px; }
+#messageArea::-webkit-scrollbar       { width: 4px; }
 #messageArea::-webkit-scrollbar-track { background: transparent; }
 #messageArea::-webkit-scrollbar-thumb { background: #2a2a35; border-radius: 4px; }
 
-/* ── WELCOME SCREEN ── */
+/* ── Welcome screen ── */
 .welcome-screen {
     display: flex;
     flex-direction: column;
@@ -292,7 +294,7 @@ body::before {
 
 @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+    50%       { transform: translateY(-8px); }
 }
 
 .welcome-screen h2 {
@@ -326,7 +328,7 @@ body::before {
     color: var(--text-dim);
 }
 
-/* ── MESSAGE BUBBLES ── */
+/* ── Messages ── */
 .msg-row {
     display: flex;
     gap: 12px;
@@ -353,16 +355,8 @@ body::before {
     margin-top: 2px;
 }
 
-.avatar.bot {
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
-}
-
-.avatar.user {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    overflow: hidden;
-}
-
+.avatar.bot  { background: linear-gradient(135deg, var(--accent), #a78bfa); }
+.avatar.user { background: var(--surface2); border: 1px solid var(--border); overflow: hidden; }
 .avatar.user img { width: 100%; height: 100%; object-fit: cover; }
 
 .bubble {
@@ -396,7 +390,7 @@ body::before {
 
 .msg-row.user .bubble-time { text-align: right; }
 
-/* ── THINKING DOTS ── */
+/* ── Thinking dots ── */
 .thinking {
     display: flex;
     gap: 4px;
@@ -417,17 +411,18 @@ body::before {
 
 @keyframes blink {
     0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
-    40%           { opacity: 1;   transform: scale(1); }
+    40%            { opacity: 1;   transform: scale(1); }
 }
 
-/* ── BOTTOM INPUT AREA ── */
+/* ── Bottom area ── */
 .bottom-area {
     border-top: 1px solid var(--border);
-    padding: 16px 24px 20px;
+    /* FIX: env(safe-area-inset-bottom) keeps content above iPhone home bar */
+    padding: 16px 24px max(20px, env(safe-area-inset-bottom));
     flex-shrink: 0;
 }
 
-/* ── UPLOAD ZONE ── */
+/* ── Drop zone ── */
 .drop-zone {
     border: 2px dashed var(--border);
     border-radius: 14px;
@@ -475,10 +470,7 @@ body::before {
     margin-bottom: 5px;
 }
 
-.drop-zone p {
-    font-size: 12px;
-    color: var(--text-muted);
-}
+.drop-zone p { font-size: 12px; color: var(--text-muted); }
 
 .drop-zone .formats {
     display: flex;
@@ -519,7 +511,7 @@ body::before {
 }
 
 #selectedFileName.visible { display: flex; }
-#selectedFileName span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#selectedFileName span    { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .upload-btn {
     background: linear-gradient(135deg, var(--accent), #a78bfa);
@@ -538,10 +530,10 @@ body::before {
     white-space: nowrap;
 }
 
-.upload-btn:hover            { opacity: 0.9; }
-.upload-btn:active           { transform: scale(0.98); }
-.upload-btn:disabled         { opacity: 0.5; cursor: not-allowed; }
-.upload-btn:focus-visible    { outline: 2px solid var(--accent); outline-offset: 2px; }
+.upload-btn:hover         { opacity: 0.9; }
+.upload-btn:active        { transform: scale(0.98); }
+.upload-btn:disabled      { opacity: 0.5; cursor: not-allowed; }
+.upload-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 #uploadStatus {
     margin-top: 10px;
@@ -549,7 +541,7 @@ body::before {
     min-height: 20px;
 }
 
-/* ── CHAT INPUT ── */
+/* ── Chat section ── */
 #chatSection { display: none; }
 
 .input-wrapper {
@@ -597,8 +589,8 @@ body::before {
     flex-shrink: 0;
 }
 
-.send-btn:hover       { background: #6a59f0; }
-.send-btn:active      { transform: scale(0.94); }
+.send-btn:hover         { background: #6a59f0; }
+.send-btn:active        { transform: scale(0.94); }
 .send-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .chat-meta {
@@ -634,15 +626,26 @@ body::before {
 .clear-btn:hover        { color: var(--danger); }
 .clear-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* ── RESPONSIVE ── */
+/* ── Mobile ── */
 @media (max-width: 768px) {
     .sidebar { display: none; }
 
     .bubble { max-width: 85%; }
 
-    .bottom-area { padding: 12px 16px 16px; }
+    /* FIX: safe-area padding on mobile — left/right for notch, bottom for home bar */
+    .bottom-area {
+        padding: 12px max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    }
 
-    .topbar { padding: 0 16px; }
+    .topbar {
+        padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
+    }
 
     #messageArea { padding: 20px 16px; }
+
+    /* Tighten the drop zone on small screens */
+    .drop-zone { padding: 20px 14px; }
+
+    .welcome-screen { padding: 24px 16px; }
+    .welcome-screen h2 { font-size: 20px; }
 }
