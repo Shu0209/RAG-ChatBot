@@ -2,22 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RAG Chatbot</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        
-    </style>
 </head>
 <body>
 
-<div class="layout">  
+<div class="layout">
 
-
-    
+    <!-- ── Sidebar ── -->
     <aside class="sidebar">
         <div class="logo">
             <div class="logo-icon">⚡</div>
@@ -39,23 +35,23 @@
         </div>
     </aside>
 
-
-
-    
+    <!-- ── Main ── -->
     <div class="main">
 
-       
+        <!-- Topbar -->
         <div class="topbar">
             <span class="topbar-title" id="topbarTitle">RAG Chatbot</span>
             <div class="status-badge">
                 <div class="status-dot"></div> Ready
             </div>
             <div class="topbar-right">
-                <button class="icon-btn" title="Clear chat" id="clearTopBtn"><i class="fas fa-trash-alt"></i></button>
+                <button class="icon-btn" title="Clear chat" id="clearTopBtn">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
             </div>
         </div>
 
-       
+        <!-- Message area -->
         <div id="messageArea">
             <div class="welcome-screen" id="welcomeScreen">
                 <div class="welcome-orb">⚡</div>
@@ -71,9 +67,10 @@
             </div>
         </div>
 
-       
+        <!-- Bottom area -->
         <div class="bottom-area">
-            
+
+            <!-- Upload section -->
             <div id="uploadSection">
                 <div class="drop-zone" id="dropZone">
                     <input type="file" id="pdfFile" accept=".pdf,.docx,.csv,.txt,.xlsx">
@@ -101,7 +98,7 @@
                 <div id="uploadStatus"></div>
             </div>
 
-         
+            <!-- Chat section -->
             <div id="chatSection">
                 <div class="input-wrapper">
                     <textarea id="userInput" placeholder="Ask a question about your document..." rows="1"></textarea>
@@ -117,27 +114,36 @@
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+
+        </div><!-- /bottom-area -->
+    </div><!-- /main -->
+</div><!-- /layout -->
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  
+
+    /* ── Helpers ── */
     function getTime() {
         return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
     function getFileIcon(name) {
         const ext = name.split('.').pop().toLowerCase();
-        const map = { pdf: 'fa-file-pdf pdf', docx: 'fa-file-word docx', doc: 'fa-file-word docx', csv: 'fa-file-csv csv', txt: 'fa-file-alt txt', xlsx: 'fa-file-excel xlsx' };
+        const map = {
+            pdf:  'fa-file-pdf pdf',
+            docx: 'fa-file-word docx',
+            doc:  'fa-file-word docx',
+            csv:  'fa-file-csv csv',
+            txt:  'fa-file-alt txt',
+            xlsx: 'fa-file-excel xlsx'
+        };
         return map[ext] || 'fa-file txt';
     }
 
     function addMessage(text, type = 'bot') {
         $('#welcomeScreen').hide();
         const time = getTime();
-        const avatarBot = `<div class="avatar bot">⚡</div>`;
+        const avatarBot  = `<div class="avatar bot">⚡</div>`;
         const avatarUser = `<div class="avatar user"><img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" onerror="this.parentElement.innerHTML='👤'"></div>`;
 
         const html = type === 'user'
@@ -158,7 +164,9 @@
         $('#welcomeScreen').hide();
         const html = `<div class="msg-row bot" id="thinkingRow">
             <div class="avatar bot">⚡</div>
-            <div><div class="bubble bot"><div class="thinking"><span></span><span></span><span></span></div></div></div>
+            <div><div class="bubble bot">
+                <div class="thinking"><span></span><span></span><span></span></div>
+            </div></div>
         </div>`;
         $('#messageArea').append(html);
         $('#messageArea').scrollTop($('#messageArea')[0].scrollHeight);
@@ -166,7 +174,7 @@
 
     function removeThinking() { $('#thinkingRow').remove(); }
 
-    
+    /* ── File selection ── */
     let selectedFile = null;
 
     $('#pdfFile').on('change', function () {
@@ -178,10 +186,10 @@
         }
     });
 
-
+    /* Drag-and-drop */
     const dz = document.getElementById('dropZone');
-    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
-    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+    dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', ()  => dz.classList.remove('drag-over'));
     dz.addEventListener('drop', e => {
         e.preventDefault();
         dz.classList.remove('drag-over');
@@ -194,7 +202,7 @@
         }
     });
 
-    
+    /* ── Upload ── */
     $('#uploadBtn').on('click', function () {
         if (!selectedFile) return;
         const formData = new FormData();
@@ -209,7 +217,6 @@
             success: function (data) {
                 $('#uploadStatus').html(`<small style="color:var(--success)"><i class="fas fa-check-circle"></i> ${data.message}</small>`);
 
-                
                 const iconClass = getFileIcon(data.filename);
                 const [icon, cls] = iconClass.split(' ');
                 $('#docList .empty-docs').remove();
@@ -241,7 +248,7 @@
         });
     });
 
-   
+    /* ── Chat ── */
     function sendMessage() {
         const msg = $('#userInput').val().trim();
         if (!msg) return;
@@ -264,13 +271,13 @@
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
     });
 
-    
+    /* Auto-resize textarea */
     $('#userInput').on('input', function () {
         this.style.height = 'auto';
         this.style.height = Math.min(this.scrollHeight, 120) + 'px';
     });
 
-    
+    /* ── Reset ── */
     function resetToUpload() {
         $('#chatSection').slideUp(300);
         $('#uploadSection').slideDown(400);
@@ -278,24 +285,26 @@
         $('#selectedFileName').removeClass('visible');
         $('#pdfFile').val('');
         $('#uploadBtn').prop('disabled', true).html('<i class="fas fa-upload"></i> Upload & Process');
-        $('#messageArea').html(`<div class="welcome-screen" id="welcomeScreen">
-            <div class="welcome-orb">⚡</div>
-            <h2>Ask anything about your docs</h2>
-            <p>Upload a document and I'll answer your questions instantly using retrieval-augmented generation.</p>
-            <div class="format-chips">
-                <span class="chip"><i class="fas fa-file-pdf" style="color:#f87171"></i> PDF</span>
-                <span class="chip"><i class="fas fa-file-word" style="color:#60a5fa"></i> DOCX</span>
-                <span class="chip"><i class="fas fa-file-csv" style="color:#4ade80"></i> CSV</span>
-                <span class="chip"><i class="fas fa-file-alt" style="color:#fbbf24"></i> TXT</span>
-                <span class="chip"><i class="fas fa-file-excel" style="color:#34d399"></i> XLSX</span>
-            </div>
-        </div>`);
+        $('#messageArea').html(`
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-orb">⚡</div>
+                <h2>Ask anything about your docs</h2>
+                <p>Upload a document and I'll answer your questions instantly using retrieval-augmented generation.</p>
+                <div class="format-chips">
+                    <span class="chip"><i class="fas fa-file-pdf" style="color:#f87171"></i> PDF</span>
+                    <span class="chip"><i class="fas fa-file-word" style="color:#60a5fa"></i> DOCX</span>
+                    <span class="chip"><i class="fas fa-file-csv" style="color:#4ade80"></i> CSV</span>
+                    <span class="chip"><i class="fas fa-file-alt" style="color:#fbbf24"></i> TXT</span>
+                    <span class="chip"><i class="fas fa-file-excel" style="color:#34d399"></i> XLSX</span>
+                </div>
+            </div>`);
         $('#topbarTitle').text('RAG Chatbot');
         selectedFile = null;
         $.post('/clear');
     }
 
     $('#newPdfBtn, #newChatSideBtn, #clearTopBtn').on('click', resetToUpload);
+
 </script>
 </body>
 </html>
